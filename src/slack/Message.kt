@@ -1,5 +1,7 @@
 package com.lucasob.slack
 
+import io.ktor.application.*
+import io.ktor.request.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,3 +23,13 @@ data class Message(
  */
 fun Message.reaction(name: String) =
     Reaction(channel = this.channel, name = name, timestamp = this.timestamp)
+
+suspend fun messageResponse(call: ApplicationCall): Response? {
+    return try {
+        with(call.receive<Event<Message>>()) {
+            this.event.reaction("heart").send()
+        }
+    } catch (e: Exception) {
+        null
+    }
+}

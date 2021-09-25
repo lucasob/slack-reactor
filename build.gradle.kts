@@ -43,6 +43,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:4.4.3")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")
