@@ -15,14 +15,16 @@ fun Route.eventRoutes() {
 
         val log = LoggerFactory.getLogger("EventRouter")
 
-        log.info("Received event: ${call.receiveText()}")
+        val requestJson = call.receiveText()
+
+        log.info("Received event: $requestJson")
 
         // If it is a challenge, respond as required
-        challengeResponse(call)?.let { return@post call.respondText { it } }
+        challengeResponse(requestJson)?.let { return@post call.respondText { it } }
 
         // If it's a message then just do it concurrently
         withContext(Dispatchers.Default) {
-            messageResponse(call)?.let {
+            messageResponse(requestJson)?.let {
                 log.info("Reaction attempt received response from Slack: $it")
             }
         }

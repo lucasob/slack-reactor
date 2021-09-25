@@ -28,9 +28,6 @@ fun Application.module(testing: Boolean = false) {
         })
     }
 
-    // Receive a call multiple times
-    install(DoubleReceive)
-
     routing {
 
         // Generic aliveness check

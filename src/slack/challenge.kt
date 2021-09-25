@@ -1,19 +1,19 @@
 package com.lucasob.slack
 
-import io.ktor.application.*
-import io.ktor.request.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 @Serializable
 data class Challenge(val type: String, val token: String, val challenge: String)
 
-suspend fun challengeResponse(call: ApplicationCall): String? {
+fun challengeResponse(requestBody: String): String? {
 
     val log = LoggerFactory.getLogger("challengeResponse")
 
     return try {
-        with(call.receive<Challenge>()) {
+        with(Json.decodeFromString<Challenge>(requestBody)) {
             log.info("Received challenge. Responding with ${this.challenge}")
             this.challenge
         }

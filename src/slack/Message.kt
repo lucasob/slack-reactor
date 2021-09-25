@@ -5,6 +5,8 @@ import io.ktor.request.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.slf4j.LoggerFactory
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 @Serializable
 data class Message(
@@ -25,13 +27,13 @@ data class Message(
 fun Message.reaction(name: String) =
     Reaction(channel = this.channel, name = name, timestamp = this.timestamp)
 
-suspend fun messageResponse(call: ApplicationCall): Response? {
+suspend fun messageResponse(requestBody: String): Response? {
 
     val log = LoggerFactory.getLogger("messageResponse")
 
     return try {
         log.info("Trying to parse message received")
-        with(call.receive<Event<Message>>()) {
+        with(Json.decodeFromString<Event<Message>>(requestBody)) {
             log.info("Received Message: ${this.event}")
             this.event.reaction("heart").send()
         }
