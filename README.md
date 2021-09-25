@@ -15,11 +15,10 @@ The build requires two arguments locally:
 * api - the root URL for the Slack API
 
 ```
-docker build -t {DESIRED_TAG} -f Dockerfile --build-arg token={TOKEN} --build-arg api=https://slack.com/api .
+docker build -t {DESIRED_TAG} -f Dockerfile --env SLACK_AUTH_TOKEN={TOKEN} --env SLACK_API_URL=https://slack.com/api .
 ```
-
-### Terraform
 
 ## Environment
 
-`SLACK_API_URL` = https://slack.com/api/
+`SLACK_API_URL` = https://slack.com/api
+`SLACK_AUTH_TOKEN` = Bot token required for auth to slack
