@@ -1,16 +1,32 @@
-name: Docker Image CI
+name: Heroku Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
 
-  build:
-
+  build_and_deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Build container
-      run:  docker build -t finger-guns -f Dockerfile --build-arg token=${SLACK_USER_TOKEN} --build-arg api=${SLACK_API_URL} .
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build container
+        run:  docker build -t finger-guns -f Dockerfile --build-arg token=${{secrets.SLACK_USER_TOKEN}} --build-arg api=${{secrets.SLACK_API_URL}} .
+
+      - name: Heroku login
+        env:
+          HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
+        run: heroku container:login
+
+      - name: Push Container
+        env:
+          HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
+        run: heroku container:push -a ${{secrets.HEROKU_APP_NAME}} finger-guns
+
+      - name: Release Container
+        env:
+          HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
+        run: heroku container:release -a ${{secrets.HEROKU_APP_NAME}} finger-guns
