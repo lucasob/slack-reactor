@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory
 fun Route.eventRoutes() {
     post("/event") {
 
-        val log = LoggerFactory.getLogger("challengeResponse")
+        val log = LoggerFactory.getLogger("EventRouter")
 
-        log.info("Received event: ${call.request}")
+        log.info("Received event: ${call.receiveText()}")
 
         // If it is a challenge, respond as required
         challengeResponse(call)?.let { return@post call.respondText { it } }

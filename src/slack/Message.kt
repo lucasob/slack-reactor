@@ -30,6 +30,7 @@ suspend fun messageResponse(call: ApplicationCall): Response? {
     val log = LoggerFactory.getLogger("messageResponse")
 
     return try {
+        log.info("Trying to parse message received")
         with(call.receive<Event<Message>>()) {
             log.info("Received Message: ${this.event}")
             this.event.reaction("heart").send()
