@@ -12,7 +12,4 @@ WORKDIR /app
 
 COPY --from=BUILD /build/build/libs/fingerGuns-0.0.1-all.jar ./fingerGuns.jar
 
-# Workaround for deployed containers in heroku that enables a connection
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
 ENTRYPOINT ["java", "-jar", "./fingerGuns.jar"]
