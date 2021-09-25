@@ -4,6 +4,7 @@ import io.ktor.application.*
 import io.ktor.request.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.slf4j.LoggerFactory
 
 @Serializable
 data class Message(
@@ -25,8 +26,12 @@ fun Message.reaction(name: String) =
     Reaction(channel = this.channel, name = name, timestamp = this.timestamp)
 
 suspend fun messageResponse(call: ApplicationCall): Response? {
+
+    val log = LoggerFactory.getLogger("messageResponse")
+
     return try {
         with(call.receive<Event<Message>>()) {
+            log.info("Received Message: ${this.event}")
             this.event.reaction("heart").send()
         }
     } catch (e: Exception) {
