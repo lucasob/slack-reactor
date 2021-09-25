@@ -13,10 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build container
-        run:  docker build -t finger-guns -f Dockerfile --build-arg token=${{secrets.SLACK_USER_TOKEN}} --build-arg api=${{secrets.SLACK_API_URL}} .
-
-      - name: Heroku login
+      - name: Heroku Login
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
         run: heroku container:login
@@ -24,9 +21,9 @@ jobs:
       - name: Push Container
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
-        run: heroku container:push -a ${{secrets.HEROKU_APP_NAME}} finger-guns
+        run: heroku container:push -a ${{secrets.HEROKU_APP_NAME}} web
 
       - name: Release Container
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
-        run: heroku container:release -a ${{secrets.HEROKU_APP_NAME}} finger-guns
+        run: heroku container:release -a ${{secrets.HEROKU_APP_NAME}} web

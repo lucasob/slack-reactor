@@ -18,6 +18,4 @@ WORKDIR /app
 
 COPY --from=BUILD /build/build/libs/fingerGuns-0.0.1-all.jar ./fingerGuns.jar
 
-EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "./fingerGuns.jar"]
