@@ -23,6 +23,7 @@ repositories {
     mavenLocal()
     jcenter()
     maven { url = uri("https://kotlin.bintray.com/ktor") }
+    mavenCentral()
 }
 
 dependencies {
@@ -37,8 +38,11 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5")
-    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     implementation("org.jetbrains.kotlin:kotlin-test:1.5.30")
+    implementation("org.junit.jupiter:junit-jupiter:5.8.0")
+
+    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")
