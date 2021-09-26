@@ -53,3 +53,6 @@ installed the app to the workspace in slack.
 *Subscribe to events on behalf of users:*
 * `message.channels` -> Honestly, fucks me if this is required.
 
+## Useful(ish) links
+* [Bot Message](https://api.slack.com/events/message/bot_message)
+* [message.channels](https://api.slack.com/events/message.channels)
