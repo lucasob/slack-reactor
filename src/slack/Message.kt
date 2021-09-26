@@ -38,9 +38,8 @@ fun getMessage(json: String): Message? {
 
     return try {
         with(Json { ignoreUnknownKeys = true; coerceInputValues = true }.decodeFromString<Event<Message>>(json)) {
+            log.info("Event received contains message\n$this")
             this.event
-        }.also {
-            log.info("Event received contains message\n$it")
         }
     } catch (e: Exception) {
         log.warn("Unable to deserialise event.\n$json")
