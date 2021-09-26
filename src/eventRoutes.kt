@@ -19,7 +19,7 @@ fun Route.eventRoutes() {
                     message
                         .react(reactionName())
                         .send()
-                        .also { response -> log.info("Slack responded to reaction", response) }
+                        .also { response -> log.info("Slack responded to reaction\n$response") }
                 }
 
                 return@with HttpStatusCode.OK
@@ -29,7 +29,7 @@ fun Route.eventRoutes() {
             // Do this last as it is never a challenge unless setting up the app.
             getChallenge(this)?.let { challenge ->
                 return@post call.respondText { challenge }
-                    .also { log.info("Responded to slack challenge", challenge) }
+                    .also { log.info("Responded to slack challenge with $challenge") }
             }
         }?.let {
             // Return the code indicated by the message processing
