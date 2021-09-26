@@ -6,8 +6,6 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 
 fun Route.eventRoutes() {
@@ -15,21 +13,25 @@ fun Route.eventRoutes() {
 
         val log = LoggerFactory.getLogger("EventRouter")
 
-        val requestJson = call.receiveText()
+        with(call.receiveText()) {
+            log.info("Received event: $this")
 
-        log.info("Received event: $requestJson")
-
-        // If it is a challenge, respond as required
-        challengeResponse(requestJson)?.let { return@post call.respondText { it } }
-
-        // If it's a message then just do it concurrently
-        withContext(Dispatchers.Default) {
-            messageResponse(requestJson)?.let {
-                log.info("Reaction attempt received response from Slack: $it")
+            getMessage(this)?.let { message ->
+                return@with message.react(reactionName()).send()
             }
+
+            // If it is a challenge, respond directly to the call with the challenge
+            // Do this last as it is likely *never* a challenge
+            getChallenge(this)?.let { challenge ->
+                log.info("Received challenge from slack. Responded with (Challenge=$challenge)")
+                return@post call.respondText { challenge }
+            }
+        }?.let {
+            // Successfully reacted to the message
+            return@post call.respond(HttpStatusCode.OK)
         }
 
-        // Slack requires that all successful *delivery* be flagged as 200
-        call.respond(HttpStatusCode.OK)
+        // If we failed to extract a message, or a challenge, still return a 2xx
+        call.respond(HttpStatusCode.Accepted)
     }
 }

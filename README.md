@@ -28,9 +28,11 @@ little heart desires (please not Azure).
 In Heroku, these need to be manually set on your dyno. The above docker run instruction offers an example for getting
 them in the container yourself.
 
-`SLACK_API_URL` = https://slack.com/api
+* `SLACK_API_URL` = https://slack.com/api
 
-`SLACK_AUTH_TOKEN` = Bot token required for auth to slack
+* `SLACK_AUTH_TOKEN` = Bot token required for auth to slack
+
+* `SLACK_REACTION_TYPE` = The name of the reaction to apply. Do not include surrounding colons
 
 ## Slack
 
@@ -39,7 +41,8 @@ Taking a second here to say `@slack: pls fix; docco sux`
 The best usage here is configuring this app to run using a *User Token*, where the app will react as the user who
 installed the app to the workspace in slack.
 
-This app currently has *No* Bot Token scopes.
+*Bot Token Scopes*
+* `channels:join`
 
 *User Token Scopes*
 * `channels:history`

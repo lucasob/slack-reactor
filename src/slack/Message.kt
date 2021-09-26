@@ -4,15 +4,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.slf4j.LoggerFactory
+
+fun reactionName() = System.getenv("SLACK_REACTION_TYPE") ?: "rocket"
 
 @Serializable
 data class Message(
     val type: String,
+    val subtype: String? = null,
     val channel: String,
-    val user: String,
+    val user: String? = null,
     val text: String,
-    @SerialName("client_msg_id") val clientMessageId: String,
+    @SerialName("client_msg_id") val clientMessageId: String? = null,
     @SerialName("ts") val timestamp: String,
     @SerialName("event_ts") val eventTimestamp: String,
     @SerialName("channel_type") val channelType: String
@@ -23,18 +25,13 @@ data class Message(
  *
  * @param name name of the reaction within the Slack channel
  */
-fun Message.reaction(name: String) =
+fun Message.react(name: String) =
     Reaction(channel = this.channel, name = name, timestamp = this.timestamp)
 
-suspend fun messageResponse(requestBody: String): Response? {
-
-    val log = LoggerFactory.getLogger("messageResponse")
-
+fun getMessage(json: String): Message? {
     return try {
-        log.info("Trying to parse message received")
-        with(Json { ignoreUnknownKeys = true; coerceInputValues = true }.decodeFromString<Event<Message>>(requestBody)) {
-            log.info("Received Message: ${this.event}")
-            this.event.reaction("fingerguns").send()
+        with(Json { ignoreUnknownKeys = true; coerceInputValues = true }.decodeFromString<Event<Message>>(json)) {
+            this.event
         }
     } catch (e: Exception) {
         null
