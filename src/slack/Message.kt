@@ -1,12 +1,10 @@
 package com.lucasob.slack
 
-import io.ktor.application.*
-import io.ktor.request.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.slf4j.LoggerFactory
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import org.slf4j.LoggerFactory
 
 @Serializable
 data class Message(
@@ -14,6 +12,7 @@ data class Message(
     val channel: String,
     val user: String,
     val text: String,
+    @SerialName("client_msg_id") val clientMessageId: String,
     @SerialName("ts") val timestamp: String,
     @SerialName("event_ts") val eventTimestamp: String,
     @SerialName("channel_type") val channelType: String
@@ -33,7 +32,7 @@ suspend fun messageResponse(requestBody: String): Response? {
 
     return try {
         log.info("Trying to parse message received")
-        with(Json.decodeFromString<Event<Message>>(requestBody)) {
+        with(Json { ignoreUnknownKeys = true; coerceInputValues = true }.decodeFromString<Event<Message>>(requestBody)) {
             log.info("Received Message: ${this.event}")
             this.event.reaction("heart").send()
         }
