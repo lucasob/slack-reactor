@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import org.slf4j.LoggerFactory
 
 fun reactionName() = System.getenv("SLACK_REACTION_TYPE") ?: "rocket"
 
@@ -32,11 +33,17 @@ fun Message.isFundingMessage() =
     this.text.lowercase().contains("funded")
 
 fun getMessage(json: String): Message? {
+
+    val log = LoggerFactory.getLogger("getMessage")
+
     return try {
         with(Json { ignoreUnknownKeys = true; coerceInputValues = true }.decodeFromString<Event<Message>>(json)) {
             this.event
+        }.also {
+            log.info("Event received contains message: (Message=${it})")
         }
     } catch (e: Exception) {
+        log.warn("Unable to deserialise event.")
         null
     }
 }
