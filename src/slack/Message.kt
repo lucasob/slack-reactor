@@ -28,6 +28,9 @@ data class Message(
 fun Message.react(name: String) =
     Reaction(channel = this.channel, name = name, timestamp = this.timestamp)
 
+fun Message.isFundingMessage() =
+    this.text.lowercase().contains("funded")
+
 fun getMessage(json: String): Message? {
     return try {
         with(Json { ignoreUnknownKeys = true; coerceInputValues = true }.decodeFromString<Event<Message>>(json)) {

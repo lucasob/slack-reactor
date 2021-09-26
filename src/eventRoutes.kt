@@ -17,21 +17,28 @@ fun Route.eventRoutes() {
             log.info("Received event: $this")
 
             getMessage(this)?.let { message ->
-                return@with message.react(reactionName()).send()
+                if (message.isFundingMessage()) {
+                    message
+                        .react(reactionName())
+                        .send()
+                        .also { response -> log.info("Slack responded with: $response") }
+                }
+
+                return@with HttpStatusCode.OK
             }
 
             // If it is a challenge, respond directly to the call with the challenge
-            // Do this last as it is likely *never* a challenge
+            // Do this last as it is never a challenge unless setting up the app.
             getChallenge(this)?.let { challenge ->
-                log.info("Received challenge from slack. Responded with (Challenge=$challenge)")
                 return@post call.respondText { challenge }
+                    .also { log.info("Received challenge from slack. Responded with (Challenge=$challenge)") }
             }
         }?.let {
-            // Successfully reacted to the message
-            return@post call.respond(HttpStatusCode.OK)
+            // Return the code indicated by the message processing
+            return@post call.respond(it)
         }
 
         // If we failed to extract a message, or a challenge, still return a 2xx
-        call.respond(HttpStatusCode.Accepted)
+        call.respond(HttpStatusCode.Accepted).also { log.info("Event was ignored") }
     }
 }
