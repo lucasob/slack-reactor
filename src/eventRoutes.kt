@@ -14,14 +14,12 @@ fun Route.eventRoutes() {
         val log = LoggerFactory.getLogger("EventRouter")
 
         with(call.receiveText()) {
-            log.info("Received event: $this")
-
             getMessage(this)?.let { message ->
                 if (message.isFundingMessage()) {
                     message
                         .react(reactionName())
                         .send()
-                        .also { response -> log.info("Slack responded with: $response") }
+                        .also { response -> log.info("Slack responded to reaction", response) }
                 }
 
                 return@with HttpStatusCode.OK
@@ -31,7 +29,7 @@ fun Route.eventRoutes() {
             // Do this last as it is never a challenge unless setting up the app.
             getChallenge(this)?.let { challenge ->
                 return@post call.respondText { challenge }
-                    .also { log.info("Received challenge from slack. Responded with (Challenge=$challenge)") }
+                    .also { log.info("Responded to slack challenge", challenge) }
             }
         }?.let {
             // Return the code indicated by the message processing
@@ -39,6 +37,6 @@ fun Route.eventRoutes() {
         }
 
         // If we failed to extract a message, or a challenge, still return a 2xx
-        call.respond(HttpStatusCode.Accepted).also { log.info("Event was ignored") }
+        call.respond(HttpStatusCode.Accepted)
     }
 }
