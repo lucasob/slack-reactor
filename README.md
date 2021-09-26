@@ -3,22 +3,50 @@
 `Finger Guns` is a one-of-a-kind Slack app. It does nothing other than apply automatic finger guns to *any* message in a
 channel that it is added to
 
-## Deployment
+## Docker
 
-### Docker
-
-The dockerfile will build the entire up, and is designed to set up such that it can build from source anywhere it is
+The dockerfile will build the entire app, and is designed to set up such that it can build from source anywhere it is
 called from.
 
-The build requires two arguments locally:
-* token - the Slack API Token
-* api - the root URL for the Slack API
+### Local
 
 ```
-docker build -t {DESIRED_TAG} -f Dockerfile --env SLACK_AUTH_TOKEN={TOKEN} --env SLACK_API_URL=https://slack.com/api .
+# To build
+docker build -t {DESIRED_TAG} -f Dockerfile .
+
+# To Run
+docker run -t {DESIRED_TAG} --env SLACK_AUTH_TOKEN={TOKEN} --env SLACK_API_URL=https://slack.com/api --port 8080:8080
 ```
+
+### Deployment
+
+Currently, this is deployed to heroku, but given it's in a delicious little container you can deploy it where ever your
+little heart desires (please not Azure).
 
 ## Environment
 
+In Heroku, these need to be manually set on your dyno. The above docker run instruction offers an example for getting
+them in the container yourself.
+
 `SLACK_API_URL` = https://slack.com/api
+
 `SLACK_AUTH_TOKEN` = Bot token required for auth to slack
+
+## Slack
+
+Taking a second here to say `@slack: pls fix; docco sux`
+
+The best usage here is configuring this app to run using a *User Token*, where the app will react as the user who
+installed the app to the workspace in slack.
+
+This app currently has *No* Bot Token scopes.
+
+*User Token Scopes*
+* `channels:history`
+* `reactions:write`
+
+*Events are enabled*
+
+*Subscribe to events on behalf of users:*
+* `message.channels` -> Honestly, fucks me if this is required.
+
