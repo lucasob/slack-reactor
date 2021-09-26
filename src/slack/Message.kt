@@ -34,7 +34,7 @@ suspend fun messageResponse(requestBody: String): Response? {
         log.info("Trying to parse message received")
         with(Json { ignoreUnknownKeys = true; coerceInputValues = true }.decodeFromString<Event<Message>>(requestBody)) {
             log.info("Received Message: ${this.event}")
-            this.event.reaction("heart").send()
+            this.event.reaction("fingerguns").send()
         }
     } catch (e: Exception) {
         null
